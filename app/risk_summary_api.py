@@ -72,6 +72,7 @@ def select_top_reviews(comments: List[str], top_k: int = 5) -> List[str]:
     top_k_idx = torch.topk(scores, k=min(top_k, len(comments))).indices
     return [comments[i] for i in top_k_idx]
 
+import json as _json
 async def call_llm_rag(prompt: str) -> str:
     """呼叫 LLM(Ollama / TGI)"""
     url = "http://45.32.22.69:11434/api/generate"
@@ -81,16 +82,14 @@ async def call_llm_rag(prompt: str) -> str:
         resp.raise_for_status()
         raw_text = resp.text
         logging.info(f"LLM raw response: {raw_text}")
-        try:
-            data = resp.json()
-        except Exception:
-            import json, re
-            match = re.search(r'\{[\s\S]*?\}', raw_text)
-            if match:
-                data = json.loads(match.group(0))
-            else:
-                raise
-        return data.get("response") or data.get("text") or str(data)
+        summary = ""
+        for line in raw_text.splitlines():
+            try:
+                obj = _json.loads(line)
+                summary += obj.get("response", "")
+            except Exception:
+                continue
+        return summary.strip() or raw_text
 
 def build_rag_prompt(comments: List[str], scores: Dict[str, float], user_weights: Dict[str, float]) -> str:
     """建立 RAG prompt"""
