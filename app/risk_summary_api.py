@@ -10,6 +10,7 @@ import logging
 from datetime import datetime
 import os
 
+router = APIRouter()
 
 # 設定 log 檔案（/var/log/just_beat_it_py/risk_summary_api.log）
 LOG_DIR = "/var/log/just_beat_it_py"
