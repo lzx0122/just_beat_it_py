@@ -44,6 +44,7 @@ class RiskSummaryRequest(BaseModel):
 class RiskSummaryResponse(BaseModel):
     summary: str = Field(..., description="風險評估摘要")
     final_risk_score: float = Field(..., description="加權後的總風險分數")
+    top_reviews: List[str] = Field(..., description="代表性評論（Top K）")
 
 # === 工具函式 ===
 def get_comments_from_db(entity_id: int, limit: int = 100) -> List[str]:
@@ -149,4 +150,8 @@ async def risk_summary_api(req: RiskSummaryRequest) -> RiskSummaryResponse:
     )
 
     # 7️⃣ 回傳結果
-    return RiskSummaryResponse(summary=summary, final_risk_score=final_score)
+    return RiskSummaryResponse(
+        summary=summary,
+        final_risk_score=final_score,
+        top_reviews=top_reviews
+    )
