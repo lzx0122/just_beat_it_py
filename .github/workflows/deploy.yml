@@ -43,6 +43,9 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
             cd ${{ secrets.VPS_PATH }}
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements.txt
             tar xzf app.tar.gz
-            pip3 install -r requirements.txt
-            sudo systemctl restart justbeatit_py || (nohup uvicorn app.main:app --host 0.0.0.0 --port 8002 > /dev/null 2>&1 &)
+            sudo systemctl restart justbeatit_py || (venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8002 > /dev/null 2>&1 &)
