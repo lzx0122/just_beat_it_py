@@ -24,7 +24,7 @@ jobs:
 
       - name: Archive project
         run: |
-          tar czf app.tar.gz --exclude='.git' --exclude='*.log' --exclude='__pycache__' --exclude='*.pyc' --exclude='risk_summary_api.log' .
+          tar czf app.tar.gz --exclude='.git' --exclude='*.log' --exclude='__pycache__' --exclude='*.pyc' --exclude='risk_summary_api.log' . || true
 
       - name: Copy files to VPS
         uses: appleboy/scp-action@v0.1.7
