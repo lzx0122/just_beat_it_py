@@ -79,7 +79,17 @@ async def call_llm_rag(prompt: str) -> str:
     async with httpx.AsyncClient() as client:
         resp = await client.post(url, json=payload, timeout=120)
         resp.raise_for_status()
-        data = resp.json()
+        raw_text = resp.text
+        logging.info(f"LLM raw response: {raw_text}")
+        try:
+            data = resp.json()
+        except Exception:
+            import json, re
+            match = re.search(r'\{[\s\S]*?\}', raw_text)
+            if match:
+                data = json.loads(match.group(0))
+            else:
+                raise
         return data.get("response") or data.get("text") or str(data)
 
 def build_rag_prompt(comments: List[str], scores: Dict[str, float], user_weights: Dict[str, float]) -> str:
