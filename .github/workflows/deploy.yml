@@ -1,0 +1,48 @@
+name: FastAPI CI/CD & Deploy
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Archive project
+        run: |
+          tar czf app.tar.gz .
+
+      - name: Copy files to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          source: "app.tar.gz"
+          target: ${{ secrets.VPS_PATH }}
+
+      - name: Remote deploy & restart
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            cd ${{ secrets.VPS_PATH }}
+            tar xzf app.tar.gz
+            pip3 install -r requirements.txt
+            sudo systemctl restart justbeatit || (nohup uvicorn app.main:app --host 0.0.0.0 --port 8002 > /dev/null 2>&1 &)
