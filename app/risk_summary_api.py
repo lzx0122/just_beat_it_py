@@ -98,7 +98,7 @@ def build_rag_prompt(comments: List[str], scores: Dict[str, float], user_weights
     weight_str = "，".join([f"{k}:{v:.2f}" for k, v in user_weights.items()])
     comments_str = "\n".join([f"{i+1}. {c}" for i, c in enumerate(comments)])
     return (
-        f"請根據以下評論與風險分數,生成店家風險評估摘要:\n"
+        f"請根據以下評論與風險分數,生成店家風險評估摘要(請用 100 字以內摘要，重點簡明扼要，不要贅述):\n"
         f"=== 評論摘要(Top {len(comments)} 條) ===\n{comments_str}\n\n"
         f"=== 風險分數 === {score_str}\n"
         f"=== 使用者權重 === {weight_str}\n"
