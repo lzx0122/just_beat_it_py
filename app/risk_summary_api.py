@@ -98,8 +98,8 @@ def build_rag_prompt(comments: List[str], scores: Dict[str, float], user_weights
     weight_str = "，".join([f"{k}:{v:.2f}" for k, v in user_weights.items()])
     comments_str = "\n".join([f"{i+1}. {c}" for i, c in enumerate(comments)])
     return (
-        f"請根據以下評論與風險分數，生成店家風險評估摘要，格式如下：\n"
-        f"每一行為『類別: 說明』，例如：\n服務: 服務速度偏慢。\n品質: 咖啡品質佳。\n環境: 空間舒適。\n價格: 價格合理。\n最後一行請給整體評價，格式為『整體評價: ...』。\n請勿包含分數、請勿多餘贅述。\n\n"
+        f"請根據以下評論、風險分數與『使用者權重』，生成店家風險評估摘要。摘要內容要特別著重於使用者權重較高的面向，讓重點更貼近使用者關注。\n"
+        f"格式如下：每一行為『類別: 說明』，例如：\n服務: 服務速度偏慢。\n品質: 咖啡品質佳。\n環境: 空間舒適。\n價格: 價格合理。\n最後一行請給整體評價，格式為『整體評價: ...』。\n請勿包含分數、請勿多餘贅述。\n\n"
         f"=== 評論摘要(Top {len(comments)} 條) ===\n{comments_str}\n\n"
         f"=== 風險分數 === {score_str}\n"
         f"=== 使用者權重 === {weight_str}\n"
