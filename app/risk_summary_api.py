@@ -76,7 +76,7 @@ def select_top_reviews(comments: List[str], top_k: int = 5) -> List[str]:
 import json as _json
 async def call_llm_rag(prompt: str) -> str:
     """呼叫 LLM(Ollama / TGI)"""
-    url = "http://45.32.253.160:11434/api/generate"
+    url = "http://198.13.49.211:11434/api/generate"
     payload = {"model": "gemma3:12b", "prompt": prompt}
     async with httpx.AsyncClient() as client:
         resp = await client.post(url, json=payload, timeout=120)
